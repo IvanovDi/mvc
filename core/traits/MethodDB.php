@@ -96,9 +96,9 @@ trait MethodDB
                 break;
         }
         if(count($this->where) === 0) {
-            $this->where [] = " where$where";
+            $this->where [] = ' where ' . $where;
         } else {
-            $this->where [] = "$operator$where";
+            $this->where [] = $operator . $where;
         }
         return $this;
     }
@@ -106,32 +106,34 @@ trait MethodDB
     public function __call($name, $arguments)
     {
         $name = strtolower($name);
-        $name = str_replace("where", "", $name);
-        $res = explode("and", $name);
-
-        $count  = count($arguments);//
-        switch($count) {
-            case 1:
-                $param = $this->checkBind($res[0]);
-                $this->bindArr[$param] = $arguments[0];
-                if (count($this->where) === 0) {
-                    $this->where [] = "where {$res[0]} = :{$param}";
-                } else {
-                    $this->where [] = "and {$res[0]} = :{$param}";
-                }
-                break;
-            case 2:
-                $param1 = $this->checkBind($res[0]);
-                $this->bindArr[$param1] = $arguments[0];
-                $param2 = $this->checkBind($res[1]);
-                $this->bindArr[$param2] = $arguments[1];//
-                if (count($this->where) === 0) {
-                    $this->where [] = "where {$res[0]} = :{$param1} and {$res[1]} = :{$param2}";
-                } else {
-                    $this->where [] = "and {$res[0]} = :{$param1} and {$res[1]} = :{$param2}";
-                }
-
-                break;
+        if(strripos($name, 'id') || (strripos($name, 'id') && strripos($name, 'name'))) {
+            $name = str_replace("where", "", $name);
+            $res = explode("and", $name);
+            $count = count($arguments);
+            switch ($count) {
+                case 1:
+                    $param = $this->checkBind($res[0]);
+                    $this->bindArr[$param] = $arguments[0];
+                    $where = " {$res[0]} = :{$param}";
+                    break;
+                case 2:
+                    $param1 = $this->checkBind($res[0]);
+                    $this->bindArr[$param1] = $arguments[0];
+                    $param2 = $this->checkBind($res[1]);
+                    $this->bindArr[$param2] = $arguments[1];
+                    $where = " {$res[0]} = :{$param1} and {$res[1]} = :{$param2}";
+                    break;
+                default:
+                    echo 'the called method does not exist';
+            }
+            if (count($this->where) === 0) {
+                $this->where [] = " where$where";
+            } else {
+                $this->where [] = "AND $where";
+            }
+        } else {
+            echo 'there is no method';
+            return;
         }
        return $this;
     }

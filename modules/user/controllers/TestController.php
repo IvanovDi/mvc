@@ -3,7 +3,6 @@
 namespace modules\user\controllers;
 
 use core\configs\Config;
-use core\models\Model;
 use core\views\View;
 use \modules\user\models\TestModel;
 
@@ -19,8 +18,8 @@ class TestController extends \core\controllers\Controller
 
     public function actionTest()
     {
-        $res = $this->model->where(["id" => 2])->all();
-        $this->view('test', ['response' => $res]);
+        $res = $this->model->select('id, name')->whereIdAndName(1, 'dima')->all();
+        $this->view('test/test', ['response' => $res]);
     }
 
 }

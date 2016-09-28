@@ -24,9 +24,9 @@ class Model
     protected function getTabName()
     {
         $nameClass = get_class($this);
-        $tmp = explode("\\", $nameClass);
+        $tmp = explode('\\', $nameClass);
         $nameClass = array_pop($tmp);
-        $nameClass = str_replace("Model", "", $nameClass);
+        $nameClass = str_replace('Model', '', $nameClass);
         return strtolower($nameClass);
     }
 
@@ -59,6 +59,8 @@ class Model
                 }
                 $viewResult[] = clone $this;
             }
+        } else {
+            echo 'the database query without answer';
         }
         return $viewResult;
     }
