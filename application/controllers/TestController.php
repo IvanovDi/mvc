@@ -11,7 +11,11 @@ class TestController extends Controller
         $data = (new TestModel())
             ->where('id', '!=', 100000)
             ->whereBetween('id', $from, $to)
-            ->orderBy('id', 'desc')
+            ->orderBy([
+                'id' => 'asc',
+                'age',
+                'name' => 'desc'
+            ])
             ->all();
         return $this->view('test/index', [
             'response' => $data

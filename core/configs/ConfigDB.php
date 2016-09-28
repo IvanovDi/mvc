@@ -2,7 +2,7 @@
 return [//@todo должно быть в папке config в корне
     "connection" => "mysql",
     "host" => "localhost",
-    "dbname" => "mvc",
+    "dbname" => "test",
     "user" => "root",
-    "password" => "root"
+    "password" => "123qwe"
 ];

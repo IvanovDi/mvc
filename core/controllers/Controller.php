@@ -9,7 +9,7 @@ class Controller
 {
     public $model;
     public $view;
-//сделать динамическое получение имени контроллера
+//сделать динамическое получение имени контроллера @todo ты прав
     function __construct()
     {
         $viewPath = Config::get("viewPath");

@@ -8,7 +8,7 @@ class ConnectionDB
 
     private static function setConnection()
     {
-        $conf = require __DIR__ . "/../configs/ConfigDB.php";
+        $conf = require __DIR__ . "/../configs/ConfigDB.php";//@todo изменить путь
         $dsn = "{$conf['connection']}:host={$conf['host']};dbname={$conf['dbname']};";
         self::$_connection = new \PDO($dsn, $conf['user'], $conf['password']);
     }

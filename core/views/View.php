@@ -14,6 +14,7 @@ class View
     function generate($path, $data = [])
     {
         extract($data);
+        //@todo проверить файл на наличие
         include $this->viewPath . $path.'.php';
     }
 }

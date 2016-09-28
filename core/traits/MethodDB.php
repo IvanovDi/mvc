@@ -1,7 +1,6 @@
 <?php
-namespace core\traits;
 
-use core\models\ConnectionDB;
+namespace core\traits;
 
 trait MethodDB
 {
@@ -13,21 +12,21 @@ trait MethodDB
     protected function checkBind($param)
     {
         $count = 1;
-       foreach ($this->bindArr as $key => $value){
-           if ($param === $key || $param . $count === $key) {
-               $count++;
-           }
-       }
-       if($count !== 1) {
-           return $param . $count;
-       } else {
-           return $param;
-       }
+        foreach ($this->bindArr as $key => $value) {
+            if ($param === $key || $param . $count === $key) {
+                $count++;
+            }
+        }
+        if ($count !== 1) {
+            return $param . $count;
+        } else {
+            return $param;
+        }
     }
 
     public function select($param)
     {
-        if($param) {
+        if ($param) {
             if (is_array($param)) {
                 $param = implode(",", $param);
             }
@@ -38,7 +37,7 @@ trait MethodDB
 
     public function whereBetween($field, $begin, $end)
     {
-         return $this->whereOrigin('AND', $field, 'between', $begin, $end);
+        return $this->whereOrigin('AND', $field, 'between', $begin, $end);
     }
 
     public function orWhere(...$arg)
@@ -55,16 +54,16 @@ trait MethodDB
     {
         $count = count($arg);
         if ($count === 0) {
-            return $this;
+            return $this;//@todo кинуть exception
         }
-        switch($count) {
+        switch ($count) {
             case 1 :
                 $where = '';
-                if(is_array($arg[0])) {
+                if (is_array($arg[0])) {
                     foreach ($arg[0] as $key => $value) {
                         $param = $this->checkBind($key);
                         $this->bindArr[$param] = $value;
-                        $where .= $where === '' ? " {$key} = :{$param} " : " AND {$key} = :{$param} ";
+                        $where .= ($where === '') ? " {$key} = :{$param} " : " AND {$key} = :{$param} ";//@todo всегда работает 1 условие
                     }
                 }
                 break;
@@ -74,7 +73,7 @@ trait MethodDB
                 $where = " {$arg[0]} = :{$param}";
                 break;
             case 3 :
-                if(array_search($arg[1], ['=', '!=', '>=', '<=', '<', '>'])) {
+                if (array_search($arg[1], ['=', '!=', '>=', '<=', '<', '>'])) {
                     $param = $this->checkBind($arg[0]);
                     $this->bindArr[$param] = $arg[2];
                     $where = " {$arg[0]} {$arg[1]} :{$param} ";
@@ -84,7 +83,7 @@ trait MethodDB
                 }
                 break;
             case 4 :
-                if($arg[1] === 'between') {
+                if ($arg[1] === 'between') {
                     $param1 = $this->checkBind($arg[0]);
                     $this->bindArr[$param1] = $arg[2];
                     $param2 = $this->checkBind($arg[0]);
@@ -95,7 +94,7 @@ trait MethodDB
                 }
                 break;
         }
-        if(count($this->where) === 0) {
+        if (count($this->where) === 0) {
             $this->where [] = ' where ' . $where;
         } else {
             $this->where [] = $operator . $where;
@@ -106,7 +105,7 @@ trait MethodDB
     public function __call($name, $arguments)
     {
         $name = strtolower($name);
-        if(strripos($name, 'id') || (strripos($name, 'id') && strripos($name, 'name'))) {
+        if (strripos($name, 'id') || (strripos($name, 'id') && strripos($name, 'name'))) {//@todo должно работать для любых полей
             $name = str_replace("where", "", $name);
             $res = explode("and", $name);
             $count = count($arguments);
@@ -135,24 +134,26 @@ trait MethodDB
             echo 'there is no method';
             return;
         }
-       return $this;
+        return $this;
     }
 
     public function orderBy(...$arg)
     {
         $this->orderBY = $this->orderBY === '' ? ' ORDER BY ' : ' ';
-        if(is_array($arg[0])) {
+        if (is_array($arg[0])) {
             foreach ($arg[0] as $key => $value) {
                 $value = strtolower($value);
-                if($value  === "desc") {
+                if ($value === "desc") {
                     $this->orderBY .= "{$key} DESC, ";
-				} else {
+                } else {
                     $this->orderBY .= "{$key} ASC, ";
                 }
             }
-            $this->orderBY = substr($this->orderBy, 0, -2);
+
+            $this->orderBY = substr($this->orderBy, 0, -2);//@todo не проверил
+//            $this->orderBY = substr($this->orderBY, 0, -2);
         } else {
-            $this->orderBY .= $arg[0] .' ' . $arg[1] ?? 'ASC';
+            $this->orderBY .= $arg[0] . ' ' . $arg[1] ?? 'ASC';
         }
         return $this;
     }
